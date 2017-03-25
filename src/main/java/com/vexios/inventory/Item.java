@@ -1,41 +1,73 @@
 package com.vexios.inventory;
 
-/**
- * Created by Liberato Camilleri on 25/03/2017.
- */
-public class Item {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
+
+@JsonIgnoreProperties
+public class Item implements Serializable {
+
+    private static final AtomicLong autoGenerator = new AtomicLong();
 
     private long id;
-    private String name;
-    private String description;
-    private int count;
-    private long timestamp;
 
-    public Item(final long id, final String name, final String description, final int count, final long timestamp) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.count = count;
-        this.timestamp = timestamp;
+    @NotNull
+    @Size(min = 2, max = 50)
+    private String name;
+
+    @NotNull
+    @Size(max = 150)
+    private String description;
+
+    @NotNull
+    @Min(1)
+    @Max(100)
+    private Integer count;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private Date timestamp;
+
+    public Item() {
+        id = autoGenerator.incrementAndGet();
+        timestamp = new Date();
     }
 
     public long getId() {
         return id;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getDescription() {
         return description;
     }
 
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
     public int getCount() {
         return count;
     }
 
-    public long getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 }
