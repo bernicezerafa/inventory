@@ -20,23 +20,8 @@ public class InventoryController {
 
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<List<Item>> getItems() {
-        return new ResponseEntity<>(new ArrayList<>(items.values()), HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Object> getItem(@PathVariable final long id) {
-        final Item matchingItem = items.get(id);
-        if (matchingItem == null) {
-            return new ResponseEntity<>("Item with id " + id + " not found!" + id, HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(matchingItem, HttpStatus.OK);
-    }
-
-    @PostMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> addItem(@Valid final Item item, final BindingResult result) {
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody ResponseEntity<Object> addItem(@Valid @RequestBody final Item item, final BindingResult result) {
         if (result.hasErrors()) {
             final List<String> errors = result.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -55,8 +40,22 @@ public class InventoryController {
         return new ResponseEntity<>(item, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Object> updateItem(@PathVariable final long id, @Valid final Item updatedItem, final BindingResult result) {
+    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<Item>> getItems() {
+        return new ResponseEntity<>(new ArrayList<>(items.values()), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Object> getItem(@PathVariable final long id) {
+        final Item matchingItem = items.get(id);
+        if (matchingItem == null) {
+            return new ResponseEntity<>("Item with id " + id + " not found!" + id, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(matchingItem, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody ResponseEntity<Object> updateItem(@PathVariable final long id, @Valid final Item updatedItem, final BindingResult result) {
         if (result.hasErrors()) {
             final List<String> errors = result.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)

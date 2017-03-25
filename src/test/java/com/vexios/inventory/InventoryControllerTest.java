@@ -3,12 +3,15 @@ package com.vexios.inventory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.validation.BindingResult;
+
+import javax.xml.ws.Response;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -27,8 +30,8 @@ public class InventoryControllerTest {
         item.setDescription("description");
         item.setCount(50);
 
-        final Item createdItem = inventoryController.addItem(item, mock(BindingResult.class));
-        assertEquals(item, createdItem);
+        final ResponseEntity<Object> createdItem = inventoryController.addItem(item, mock(BindingResult.class));
+        assertEquals(item, createdItem.getBody());
     }
 
     @Test
