@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS inventory_items (
+  id BIGINT(20) NOT NULL AUTO_INCREMENT,
+  name VARCHAR(50) NOT NULL,
+  description VARCHAR(150),
+  count TINYINT(3) NOT NULL,
+  timestamp BIGINT(20) NOT NULL,  
+
+  PRIMARY KEY (`id`)
+);

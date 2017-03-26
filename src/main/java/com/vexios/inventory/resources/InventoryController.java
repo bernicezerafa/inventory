@@ -4,6 +4,7 @@ import com.vexios.inventory.errors.BadRequestException;
 import com.vexios.inventory.models.ItemRequest;
 import com.vexios.inventory.models.ItemResponse;
 import com.vexios.inventory.services.InventoryService;
+import com.vexios.inventory.services.InventoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+@RequestMapping("/items")
 @RestController
 public class InventoryController {
 
@@ -23,7 +25,7 @@ public class InventoryController {
         this.inventoryService = inventoryService;
     }
 
-    @PostMapping(value = "/items", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody ItemResponse addItem(@RequestBody @Valid final ItemRequest item, final BindingResult result) {
         if (result.hasErrors()) {
@@ -33,17 +35,17 @@ public class InventoryController {
         return inventoryService.addItem(item);
     }
 
-    @GetMapping(value = "/items", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody List<ItemResponse> getItems() {
         return inventoryService.getItems();
     }
 
-    @GetMapping(value = "/items/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody ItemResponse getItem(@PathVariable final long id) {
         return inventoryService.getItem(id);
     }
 
-    @PutMapping(value = "/items/{id}",
+    @PutMapping(value = "/{id}",
                 consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
                 produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody ItemResponse updateItem(@PathVariable final long id,

@@ -3,6 +3,7 @@ package com.vexios.inventory.models;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -14,11 +15,11 @@ public class ItemResponse implements Serializable {
     private String name;
     private String description;
     private Integer count;
-    private long timestamp;
+    private Date timestamp;
 
     public ItemResponse() {
         id = autoGenerator.incrementAndGet();
-        timestamp = System.currentTimeMillis();
+        timestamp = new Date();
     }
 
     public long getId() {
@@ -49,7 +50,7 @@ public class ItemResponse implements Serializable {
         return count;
     }
 
-    public long getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 }
