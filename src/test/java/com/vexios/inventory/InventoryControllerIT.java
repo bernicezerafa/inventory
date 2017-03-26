@@ -3,8 +3,8 @@ package com.vexios.inventory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.gson.Gson;
 import com.vexios.inventory.models.ErrorInfo;
+import com.vexios.inventory.dao.Item;
 import com.vexios.inventory.models.ItemRequest;
-import com.vexios.inventory.models.ItemResponse;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,13 +30,14 @@ import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {Application.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class InventoryControllerTest {
+public class InventoryControllerIT {
 
     @Autowired
     private WebApplicationContext wac;
@@ -62,7 +63,7 @@ public class InventoryControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andReturn();
 
-        final ItemResponse response = gson.fromJson(createItemResult.getResponse().getContentAsString(), ItemResponse.class);
+        final Item response = gson.fromJson(createItemResult.getResponse().getContentAsString(), Item.class);
         assertSuccessfulItemResponse(buildItemResponse(request), response);
     }
 
@@ -185,7 +186,7 @@ public class InventoryControllerTest {
         final MvcResult getItemsResult = this.mockMvc.perform(getItemsRequest)
                         .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
 
-        final List<ItemResponse> items = gson.fromJson(getItemsResult.getResponse().getContentAsString(), new TypeReference<List<ItemResponse>>() {}.getType());
+        final List<Item> items = gson.fromJson(getItemsResult.getResponse().getContentAsString(), new TypeReference<List<Item>>() {}.getType());
         assertEquals("Expecting 2 items", 2, items.size());
         assertTrue("One of the items should be test_name1", items.stream().anyMatch(item -> item.getName().equals("test_name1")));
         assertTrue("One of the items should be test_name2", items.stream().anyMatch(item -> item.getName().equals("test_name2")));
@@ -193,7 +194,7 @@ public class InventoryControllerTest {
 
     @Test
     public void getItemById_itemExists_shouldReturnItem() throws Exception {
-        final ItemResponse expectedItem = createItem("test_name1", "test_description1", 50);
+        final Item expectedItem = createItem("test_name1", "test_description1", 50);
 
         final MockHttpServletRequestBuilder getItemRequest =
                 MockMvcRequestBuilders.get("/items/{id}", expectedItem.getId())
@@ -203,7 +204,7 @@ public class InventoryControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final ItemResponse response = gson.fromJson(getItemResult.getResponse().getContentAsString(), ItemResponse.class);
+        final Item response = gson.fromJson(getItemResult.getResponse().getContentAsString(), Item.class);
         assertSuccessfulItemResponse(expectedItem, response);
     }
 
@@ -222,7 +223,7 @@ public class InventoryControllerTest {
 
     @Test
     public void updateItem_itemExists_shouldReturnUpdatedItem() throws Exception {
-        final ItemResponse itemBeforeUpdate = createItem("test_name1", "test_description1", 50);
+        final Item itemBeforeUpdate = createItem("test_name1", "test_description1", 50);
         final ItemRequest request = buildItemRequest("updatedName", "updatedDescription", 20);
 
         final MockHttpServletRequestBuilder getItemRequest =
@@ -234,13 +235,13 @@ public class InventoryControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
 
-        final ItemResponse response = gson.fromJson(getItemResult.getResponse().getContentAsString(), ItemResponse.class);
+        final Item response = gson.fromJson(getItemResult.getResponse().getContentAsString(), Item.class);
         assertSuccessfulItemResponse(buildItemResponse(request), response);
     }
 
     @Test
     public void updateItemName_itemWithNameAlreadyExists_shouldReturnUnprocessableEntity() throws Exception {
-        final ItemResponse itemBeforeUpdate = createItem("test_name1", "test_description1", 50);
+        final Item itemBeforeUpdate = createItem("test_name1", "test_description1", 50);
         final String duplicateItemName = "test_name2";
         createItem(duplicateItemName, "test_description2", 50);
 
@@ -284,21 +285,21 @@ public class InventoryControllerTest {
         return item;
     }
 
-    private ItemResponse buildItemResponse(final ItemRequest request) {
-        final ItemResponse itemResponse = new ItemResponse();
-        itemResponse.setName(request.getName());
-        itemResponse.setDescription(request.getDescription());
-        itemResponse.setCount(request.getCount());
-        return itemResponse;
+    private Item buildItemResponse(final ItemRequest request) {
+        final Item item = new Item();
+        item.setName(request.getName());
+        item.setDescription(request.getDescription());
+        item.setCount(request.getCount());
+        return item;
     }
 
-    private ItemResponse createItem(final String name, final String description, final Integer count) throws Exception {
+    private Item createItem(final String name, final String description, final Integer count) throws Exception {
         final MockHttpServletRequestBuilder createItemRequest =
                 MockMvcRequestBuilders.post("/items")
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .content(gson.toJson(buildItemRequest(name, description, count)));
         final MvcResult mvcResult = this.mockMvc.perform(createItemRequest).andReturn();
-        return gson.fromJson(mvcResult.getResponse().getContentAsString(), ItemResponse.class);
+        return gson.fromJson(mvcResult.getResponse().getContentAsString(), Item.class);
     }
 
     private void assertBadRequest(final ResultActions resultActions, final String errorField) throws Exception {
@@ -313,7 +314,7 @@ public class InventoryControllerTest {
         assertNotNull("Error message should not be null", errors.get(0).getMessage());
     }
 
-    private void assertSuccessfulItemResponse(final ItemResponse expectedItem, final ItemResponse actualItem) {
+    private void assertSuccessfulItemResponse(final Item expectedItem, final Item actualItem) {
         assertNotNull("id should not be null", actualItem.getId());
         assertEquals("name not as expected", expectedItem.getName(), actualItem.getName());
         assertEquals("description not as expected", expectedItem.getDescription(), actualItem.getDescription());

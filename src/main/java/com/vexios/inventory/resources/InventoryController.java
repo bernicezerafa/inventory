@@ -2,9 +2,9 @@ package com.vexios.inventory.resources;
 
 import com.vexios.inventory.errors.BadRequestException;
 import com.vexios.inventory.models.ItemRequest;
+import com.vexios.inventory.dao.Item;
 import com.vexios.inventory.models.ItemResponse;
 import com.vexios.inventory.services.InventoryService;
-import com.vexios.inventory.services.InventoryServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +27,7 @@ public class InventoryController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody ItemResponse addItem(@RequestBody @Valid final ItemRequest item, final BindingResult result) {
+    public @ResponseBody Item addItem(@RequestBody @Valid final ItemRequest item, final BindingResult result) {
         if (result.hasErrors()) {
             throw new BadRequestException(result);
         }
@@ -36,21 +36,22 @@ public class InventoryController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public @ResponseBody List<ItemResponse> getItems() {
+    public @ResponseBody List<Item> getItems() {
         return inventoryService.getItems();
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public @ResponseBody ItemResponse getItem(@PathVariable final long id) {
+    public @ResponseBody
+    Item getItem(@PathVariable final long id) {
         return inventoryService.getItem(id);
     }
 
     @PutMapping(value = "/{id}",
                 consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
                 produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public @ResponseBody ItemResponse updateItem(@PathVariable final long id,
-                                                 @RequestBody @Valid final ItemRequest updatedItem,
-                                                 final BindingResult result) {
+    public @ResponseBody Item updateItem(@PathVariable final long id,
+                                         @RequestBody @Valid final ItemRequest updatedItem,
+                                         final BindingResult result) {
         if (result.hasErrors()) {
             throw new BadRequestException(result);
         }

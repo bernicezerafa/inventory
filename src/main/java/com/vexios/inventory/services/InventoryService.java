@@ -1,17 +1,17 @@
 package com.vexios.inventory.services;
 
 import com.vexios.inventory.models.ItemRequest;
-import com.vexios.inventory.models.ItemResponse;
+import com.vexios.inventory.dao.Item;
 
 import java.util.List;
 
 public interface InventoryService {
 
-    ItemResponse addItem(ItemRequest item);
+    Item addItem(ItemRequest item);
 
-    ItemResponse getItem(long id);
+    Item getItem(long id);
 
-    List<ItemResponse> getItems();
+    List<Item> getItems();
 
-    ItemResponse updateItem(long id, ItemRequest item);
+    Item updateItem(long id, ItemRequest item);
 }
