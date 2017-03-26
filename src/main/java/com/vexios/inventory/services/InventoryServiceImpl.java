@@ -60,11 +60,7 @@ public class InventoryServiceImpl implements InventoryService {
             throw new IllegalStateException(String.format("Item with name %s already exists!", item.getName()));
         }
 
-        itemBeingUpdated.setName(item.getName());
-        itemBeingUpdated.setDescription(item.getDescription());
-        itemBeingUpdated.setCount(item.getCount());
-
-        itemsRepositoryImpl.updateItem(itemBeingUpdated);
+        itemsRepositoryImpl.updateItem(buildItem(item));
         return itemBeingUpdated;
     }
 
