@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
-import org.apache.log4j.Logger;
+
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -18,7 +18,8 @@ public class ExceptionHandlingController {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({BadRequestException.class})
-    public @ResponseBody List<ErrorInfo> handleBadRequest(final BadRequestException e) {
+    public @ResponseBody
+    List<ErrorInfo> handleBadRequest(final BadRequestException e) {
         return e.getErrors().getFieldErrors()
                 .stream()
                 .map(error -> buildErrorInfo(error.getField(), error.getDefaultMessage()))
@@ -27,19 +28,22 @@ public class ExceptionHandlingController {
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     @ExceptionHandler({IllegalStateException.class})
-    public @ResponseBody ErrorInfo handleLogicalError(final IllegalStateException e) {
+    public @ResponseBody
+    ErrorInfo handleLogicalError(final IllegalStateException e) {
         return buildErrorInfo(null, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({NotFoundException.class})
-    public @ResponseBody ErrorInfo handleNotFound(final NotFoundException e) {
+    public @ResponseBody
+    ErrorInfo handleNotFound(final NotFoundException e) {
         return buildErrorInfo(null, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({Exception.class})
-    public @ResponseBody ErrorInfo handleInternalServerError(final Exception e) {
+    public @ResponseBody
+    ErrorInfo handleInternalServerError(final Exception e) {
         return buildErrorInfo(null, GENERAL_ERROR);
     }
 

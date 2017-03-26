@@ -1,7 +1,8 @@
 package com.vexios.inventory.resources;
 
 import com.vexios.inventory.errors.BadRequestException;
-import com.vexios.inventory.models.Item;
+import com.vexios.inventory.models.ItemRequest;
+import com.vexios.inventory.models.ItemResponse;
 import com.vexios.inventory.services.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-@RestController("items")
+@RestController
 public class InventoryController {
 
     private final InventoryService inventoryService;
@@ -22,9 +23,9 @@ public class InventoryController {
         this.inventoryService = inventoryService;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @PostMapping(value = "/items", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public @ResponseBody Item addItem(@RequestBody @Valid final Item item, final BindingResult result) {
+    public @ResponseBody ItemResponse addItem(@RequestBody @Valid final ItemRequest item, final BindingResult result) {
         if (result.hasErrors()) {
             throw new BadRequestException(result);
         }
@@ -32,22 +33,22 @@ public class InventoryController {
         return inventoryService.addItem(item);
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<Item> getItems() {
+    @GetMapping(value = "/items", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody List<ItemResponse> getItems() {
         return inventoryService.getItems();
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Item getItem(@PathVariable final long id) {
+    @GetMapping(value = "/items/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody ItemResponse getItem(@PathVariable final long id) {
         return inventoryService.getItem(id);
     }
 
-    @PutMapping(value = "/{id}",
+    @PutMapping(value = "/items/{id}",
                 consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
                 produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public @ResponseBody Item updateItem(@PathVariable final long id,
-                                         @RequestBody @Valid final Item updatedItem,
-                                         final BindingResult result) {
+    public @ResponseBody ItemResponse updateItem(@PathVariable final long id,
+                                                 @RequestBody @Valid final ItemRequest updatedItem,
+                                                 final BindingResult result) {
         if (result.hasErrors()) {
             throw new BadRequestException(result);
         }

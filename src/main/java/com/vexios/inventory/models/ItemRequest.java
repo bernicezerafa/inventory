@@ -8,14 +8,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.concurrent.atomic.AtomicLong;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Item implements Serializable {
-
-    private static final AtomicLong autoGenerator = new AtomicLong();
-
-    private long id;
+public class ItemRequest implements Serializable {
 
     @NotBlank
     @Size(max = 50)
@@ -29,17 +24,6 @@ public class Item implements Serializable {
     @Min(1)
     @Max(100)
     private Integer count;
-
-    private long timestamp;
-
-    public Item() {
-        id = autoGenerator.incrementAndGet();
-        timestamp = System.currentTimeMillis();
-    }
-
-    public long getId() {
-        return id;
-    }
 
     public void setName(final String name) {
         this.name = name;
@@ -63,9 +47,5 @@ public class Item implements Serializable {
 
     public int getCount() {
         return count;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
     }
 }
