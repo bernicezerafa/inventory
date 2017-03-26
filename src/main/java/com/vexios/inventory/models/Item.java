@@ -1,28 +1,27 @@
-package com.vexios.inventory;
+package com.vexios.inventory.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
-@JsonIgnoreProperties
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Item implements Serializable {
 
     private static final AtomicLong autoGenerator = new AtomicLong();
 
     private long id;
 
-    @NotNull
-    @Size(min = 2, max = 50)
+    @NotBlank
+    @Size(max = 50)
     private String name;
 
-    @NotNull
+    @NotBlank
     @Size(max = 150)
     private String description;
 
@@ -31,12 +30,11 @@ public class Item implements Serializable {
     @Max(100)
     private Integer count;
 
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    private Date timestamp;
+    private long timestamp;
 
     public Item() {
         id = autoGenerator.incrementAndGet();
-        timestamp = new Date();
+        timestamp = System.currentTimeMillis();
     }
 
     public long getId() {
@@ -67,7 +65,7 @@ public class Item implements Serializable {
         return count;
     }
 
-    public Date getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 }
